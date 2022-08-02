@@ -23,10 +23,11 @@ const ProductItem: React.FC<ProductItemProps> = (props) => {
           <div>{title}</div>
           <div>${price}</div>
         </div>
-        <small>Available quantity:{inventory}</small>
+        <small>Available quantity:{inventory === 0 ? 'Sold out' : inventory}</small>
         {/* FIXME: 如果賣完，文字換成 Sold out，同時不能點擊 */}
         <button
           className="btn btn-sm btn-warning fw-light"
+          disabled={inventory === 0}
           onClick={() => {
             onAddToCart(id);
           }}

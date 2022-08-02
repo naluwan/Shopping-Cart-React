@@ -3,7 +3,7 @@ import ProductItem from './ProductItem';
 import { PRODUCTS } from './config';
 import Cart from './Cart';
 import Coupons from './Coupons';
-import type { LineItem } from './types';
+import type { LineItem, Product } from './types';
 
 const ShoppingCart = () => {
   // TODO 2
@@ -12,6 +12,10 @@ const ShoppingCart = () => {
    * @type {[LineItem[], Function]}
    */
   const [lineItems, setLineItems] = React.useState([]);
+  /**
+   * @type {[Product[], Function]}
+   */
+  const [products, setProducts] = React.useState(PRODUCTS)
 
   // TODO 6
   React.useEffect(() => {
@@ -20,6 +24,39 @@ const ShoppingCart = () => {
     }, 0);
     setTotalAmount(calcTotalAmount);
   }, [lineItems]);
+
+  const atUpdateInventory = useCallback((id: string, condition: string) => {
+    switch (condition) {
+      case '+':
+        setProducts((prev) => {
+          return prev.map((product: Product) => {
+            if (product.id === id) {
+              return {
+                ...product,
+                inventory: product.inventory + 1
+              }
+            }
+            return product
+          })
+        })
+        break;
+      case '-':
+        setProducts((prev) => {
+          return prev.map((product: Product) => {
+            if (product.id === id) {
+              return {
+                ...product,
+                inventory: product.inventory - 1
+              }
+            }
+            return product
+          })
+        })
+        break;
+      default:
+        break;
+    }
+  })
 
   // TODO 5
   const atUpdateQuantity = useCallback((id: string) => {
@@ -44,7 +81,7 @@ const ShoppingCart = () => {
     (id: string) => {
       const foundItem = lineItems.find((data) => data.id === id);
       if (foundItem) {
-        atUpdateQuantity(id);
+        atUpdateQuantity(id, foundItem.quantity + 1);
       } else {
         // 新增
         const foundProduct = PRODUCTS.find((data) => data.id === id);
@@ -56,6 +93,7 @@ const ShoppingCart = () => {
           quantity: 1,
         };
         setLineItems((prev) => prev.concat(lineItem));
+        atUpdateInventory(id, '-')
       }
     },
     [atUpdateQuantity, lineItems],
