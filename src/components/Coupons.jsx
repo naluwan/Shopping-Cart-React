@@ -1,4 +1,5 @@
 import React from 'react';
+import useCartContext from './CartContext';
 import { coupons } from './config';
 
 type CouponsProps = {
@@ -6,18 +7,21 @@ type CouponsProps = {
 };
 const Coupons: React.FC<CouponsProps> = (props) => {
   const { onApplyCoupon } = props;
+  const { coupon } = useCartContext()
+  const currentCoupon = coupon.id
   return (
     <section data-name="coupons">
-      {coupons.map((coupon) => {
+      {coupons.map((couponItem) => {
         return (
           <button
-            key={coupon.id}
-            className="btn btn-info"
+            key={couponItem.id}
+            className="btn btn-info m-2"
+            disabled={currentCoupon === couponItem.id}
             onClick={() => {
-              onApplyCoupon(coupon);
+              onApplyCoupon(couponItem);
             }}
           >
-            {coupon.id}
+            {couponItem.id}
           </button>
         );
       })}
