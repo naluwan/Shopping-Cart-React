@@ -2,18 +2,13 @@
 import React from 'react';
 import CartLineItem from './CartLineItem';
 import type { LineItem } from '../types';
+import useCartContext from '../CartContext';
 
 // TODO 7
-type CartProps = {
-  totalAmount: number,
-  lineItems: LineItem[],
-  onUpdateQuantity: (id: string) => void,
-  onRemoveItem: (id: string) => void,
-  onRemoveCart: () => void,
-};
 
 const Cart: React.FC<CartProps> = (props) => {
-  const { totalAmount, lineItems, onUpdateQuantity, onRemoveItem, onRemoveCart } = props;
+
+  const { lineItems, totalAmount, onRemoveCart } = useCartContext()
 
   return (
     <section data-name="Cart">
@@ -32,8 +27,6 @@ const Cart: React.FC<CartProps> = (props) => {
             title={data.title}
             price={data.price}
             quantity={data.quantity}
-            onUpdateQuantity={onUpdateQuantity}
-            onRemoveItem={onRemoveItem}
           />
         );
       })}

@@ -4,6 +4,7 @@ import { PRODUCTS } from './config';
 import Cart from './Cart';
 import Coupons from './Coupons';
 import type { LineItem, Product } from './types';
+import { CartContext } from './CartContext'
 
 const ShoppingCart = () => {
   // TODO 2
@@ -18,7 +19,10 @@ const ShoppingCart = () => {
   const [products, setProducts] = React.useState(PRODUCTS)
 
   // TODO 6
+  // 當lineItems有變化時就計算商品小計
   React.useEffect(() => {
+    // 使用array.reduce((acc, curr) => {}, 0)
+    // 0代表起始值為0從0開始加lineItems裡面的每一個商品單價乘數量
     const calcTotalAmount = lineItems.reduce((total, currentItem) => {
       return total + currentItem.price * currentItem.quantity;
     }, 0);
@@ -59,20 +63,25 @@ const ShoppingCart = () => {
   })
 
   // TODO 5
-  const atUpdateQuantity = useCallback((id: string) => {
+  const atUpdateQuantity = useCallback((id: string, quantity: number) => {
     // 增加數量
     setLineItems((prev) => {
-      return prev.map((item: LineItem) => {
+      const newLineItems = prev.map((item: LineItem) => {
         if (item.id === id) {
+          if (item.quantity > quantity) {
+            atUpdateInventory(id, '+')
+          } else {
+            atUpdateInventory(id, '-')
+          }
           return {
-            id: item.id,
-            title: item.title,
-            price: item.price,
-            quantity: item.quantity + 1,
+            ...item,
+            quantity
           };
         }
         return item;
       });
+      const filterLineItems = newLineItems.filter((item: LineItem) => item.quantity !== 0)
+      return filterLineItems
     });
   }, []);
 
@@ -100,14 +109,28 @@ const ShoppingCart = () => {
   );
 
   // TODO
-  const onRemoveItem = useCallback((id: string) => {
+  const atRemoveItem = useCallback((id: string, quantity: number) => {
     setLineItems((prev) => prev.filter((item) => item.id !== id));
+    setProducts((prev) => {
+      return prev.map((product: Product) => {
+        if (product.id === id) {
+          return {
+            ...product,
+            inventory: product.inventory + quantity
+          }
+        }
+        return product
+      })
+    })
   }, []);
 
   // TODO
-  const onRemoveCart = useCallback(() => {
+  const atRemoveCart = useCallback(() => {
+    lineItems.map((lineItem: LineItem) => {
+      atRemoveItem(lineItem.id, lineItem.quantity)
+    })
     setLineItems([]);
-  }, []);
+  }, [lineItems]);
 
   // FIXME 請實作 coupon
   /*
@@ -116,36 +139,41 @@ const ShoppingCart = () => {
   }, []);
   */
 
+  const provideValue = {
+    products,
+    totalAmount,
+    lineItems,
+    onRemoveCart: atRemoveCart,
+    onUpdateQuantity: atUpdateQuantity,
+    onRemoveItem: atRemoveItem
+  }
+
   return (
-    <div className="container">
-      <div className="row">
-        {/* TODO 4 */}
-        {PRODUCTS.map((product) => {
-          return (
-            <div className="col-3" key={product.id}>
-              <ProductItem
-                id={product.id}
-                img={product.img}
-                title={product.title}
-                price={product.price}
-                inventory={product.inventory}
-                // TODO 5
-                onAddToCart={atAddToCart}
-              />
-            </div>
-          );
-        })}
+    <CartContext.Provider value={provideValue}>
+      <div className="container">
+        <div className="row">
+          {/* TODO 4 */}
+          {products.map((product) => {
+            return (
+              <div className="col-3" key={product.id}>
+                <ProductItem
+                  id={product.id}
+                  img={product.img}
+                  title={product.title}
+                  price={product.price}
+                  inventory={product.inventory}
+                  // TODO 5
+                  onAddToCart={atAddToCart}
+                />
+              </div>
+            );
+          })}
+        </div>
+        <Cart />
+        {/* FIXME 請實作 coupon 功能 */}
+        {/* <Coupons onApplyCoupon={atApplyCoupon} />} */}
       </div>
-      <Cart
-        totalAmount={totalAmount}
-        lineItems={lineItems}
-        onRemoveCart={onRemoveCart}
-        onUpdateQuantity={atUpdateQuantity}
-        onRemoveItem={onRemoveItem}
-      />
-      {/* FIXME 請實作 coupon 功能 */}
-      {/* <Coupons onApplyCoupon={atApplyCoupon} />} */}
-    </div>
+    </CartContext.Provider>
   );
 };
 
