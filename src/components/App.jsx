@@ -3,7 +3,7 @@ import ProductItem from './ProductItem';
 import { PRODUCTS } from './config';
 import Cart from './Cart';
 import Coupons from './Coupons';
-import type { LineItem, Product } from './types';
+import type { LineItem, Product, Coupon } from './types';
 import { CartContext } from './CartContext'
 
 const ShoppingCart = () => {
@@ -17,6 +17,10 @@ const ShoppingCart = () => {
    * @type {[Product[], Function]}
    */
   const [products, setProducts] = React.useState(PRODUCTS)
+  /**
+   * @type {[Coupon, Function]}
+   */
+  const [coupon, setCoupon] = React.useState([])
 
   // TODO 6
   // 當lineItems有變化時就計算商品小計
@@ -26,6 +30,7 @@ const ShoppingCart = () => {
     const calcTotalAmount = lineItems.reduce((total, currentItem) => {
       return total + currentItem.price * currentItem.quantity;
     }, 0);
+
     setTotalAmount(calcTotalAmount);
   }, [lineItems]);
 
@@ -133,16 +138,23 @@ const ShoppingCart = () => {
   }, [lineItems]);
 
   // FIXME 請實作 coupon
-  /*
-  const atApplyCoupon = useCallback((coupon) => {
+
+  const atApplyCoupon = useCallback((coupon: Coupon) => {
     console.log('coupon', coupon);
+    setCoupon(coupon)
   }, []);
-  */
+
+  const atRemoveCoupon = useCallback(() => {
+    setCoupon([])
+  }, [])
+
 
   const provideValue = {
     products,
     totalAmount,
     lineItems,
+    coupon,
+    onRemoveCoupon: atRemoveCoupon,
     onRemoveCart: atRemoveCart,
     onUpdateQuantity: atUpdateQuantity,
     onRemoveItem: atRemoveItem
@@ -171,7 +183,7 @@ const ShoppingCart = () => {
         </div>
         <Cart />
         {/* FIXME 請實作 coupon 功能 */}
-        {/* <Coupons onApplyCoupon={atApplyCoupon} />} */}
+        <Coupons onApplyCoupon={atApplyCoupon} />
       </div>
     </CartContext.Provider>
   );

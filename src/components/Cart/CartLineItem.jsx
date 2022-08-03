@@ -47,7 +47,7 @@ const BuildItem: React.FC<BuildItemProps> = (props) => {
       <div className="col-2">{price}</div>
       <div className="col-3">{lineItemPrice}</div>
       <div className="col-2">
-        <button className="btn btn-danger w-100" onClick={() => onRemoveItem(id, quantity)}>
+        <button className="btn btn-danger w-100 mb-3" onClick={() => onRemoveItem(id, quantity)}>
           Remove
         </button>
       </div>

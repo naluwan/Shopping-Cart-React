@@ -26,7 +26,7 @@ const ProductItem: React.FC<ProductItemProps> = (props) => {
         <small>Available quantity:{inventory === 0 ? 'Sold out' : inventory}</small>
         {/* FIXME: 如果賣完，文字換成 Sold out，同時不能點擊 */}
         <button
-          className="btn btn-sm btn-warning fw-light"
+          className="btn btn-sm btn-warning fw-light m-2"
           disabled={inventory === 0}
           onClick={() => {
             onAddToCart(id);
