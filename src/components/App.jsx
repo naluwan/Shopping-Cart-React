@@ -140,6 +140,10 @@ const ShoppingCart = () => {
   // FIXME 請實作 coupon
 
   const atApplyCoupon = useCallback((coupon: Coupon) => {
+<<<<<<< HEAD
+=======
+    console.log('coupon', coupon);
+>>>>>>> 5890f36ff399836c54dd879cd13fb4b4767b0d8a
     setCoupon(coupon)
   }, []);
 
