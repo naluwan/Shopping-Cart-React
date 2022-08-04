@@ -6,8 +6,8 @@ type CouponsProps = {
   onApplyCoupon: (coupon: string) => void,
 };
 const Coupons: React.FC<CouponsProps> = (props) => {
-  const { onApplyCoupon } = props;
-  const { coupon } = useCartContext()
+  const { onApplyCoupon, coupon } = props;
+
   const currentCoupon = coupon.id
   return (
     <section data-name="coupons">

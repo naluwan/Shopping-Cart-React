@@ -151,11 +151,6 @@ const ShoppingCart = () => {
 
   const provideValue = {
     products,
-    totalAmount,
-    lineItems,
-    coupon,
-    onRemoveCoupon: atRemoveCoupon,
-    onRemoveCart: atRemoveCart,
     onUpdateQuantity: atUpdateQuantity,
     onRemoveItem: atRemoveItem
   }
@@ -181,9 +176,15 @@ const ShoppingCart = () => {
             );
           })}
         </div>
-        <Cart />
+        <Cart
+          lineItems={lineItems}
+          totalAmount={totalAmount}
+          coupon={coupon}
+          onRemoveCoupon={atRemoveCoupon}
+          onRemoveCart={atRemoveCart}
+        />
         {/* FIXME 請實作 coupon 功能 */}
-        <Coupons onApplyCoupon={atApplyCoupon} />
+        <Coupons onApplyCoupon={atApplyCoupon} coupon={coupon} />
       </div>
     </CartContext.Provider>
   );

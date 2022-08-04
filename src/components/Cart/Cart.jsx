@@ -8,12 +8,9 @@ import useCartContext from '../CartContext';
 
 const Cart: React.FC<CartProps> = (props) => {
 
-  const { lineItems, totalAmount, onRemoveCart, coupon, onRemoveCoupon } = useCartContext()
+  const { lineItems, totalAmount, onRemoveCart, coupon, onRemoveCoupon } = props
+
   const currentTotalPrice = (coupon.length !== 0 && totalAmount !== 0) ? `${totalAmount} - ${coupon.discount}(coupon優惠) = ${totalAmount - coupon.discount}` : totalAmount
-
-  const couponBadge = coupon.length !== 0 && (<h5 className='text-end mt-3'> {coupon.id} <span className="badge bg-warning">折扣金額：{coupon.discount}</span></h5>)
-
-  const removeCouponBtn = coupon.length !== 0 && (<button className='btn btn-danger m-2' onClick={onRemoveCoupon}>移除coupon</button>)
 
   return (
     <section data-name="Cart">
@@ -36,9 +33,9 @@ const Cart: React.FC<CartProps> = (props) => {
         );
       })}
       <div className="text-end">totalAmount: {currentTotalPrice}</div>
-      {couponBadge}
+      {coupon.length !== 0 && <h5 className='text-end mt-3'> {coupon.id} <span className="badge bg-warning">折扣金額：{coupon.discount}</span></h5>}
       <div className='text-end'>
-        {removeCouponBtn}
+        {coupon.length !== 0 && <button className='btn btn-danger m-2' onClick={onRemoveCoupon}>移除coupon</button>}
       </div>
       <button
         disabled={totalAmount === 0}
